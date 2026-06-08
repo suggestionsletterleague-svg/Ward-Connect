@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    /* Respect device safe areas (notches, home indicators). */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-navy;
+  }
+  /* Larger tap targets and visible focus for accessibility. */
+  button, a, input, select, textarea {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow-card p-5;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-base font-semibold transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-navy text-white hover:bg-navy-light;
+  }
+  .btn-secondary {
+    @apply btn bg-sage-mist text-navy hover:bg-sage-light/40;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-navy-dark hover:bg-gold-light;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-navy hover:bg-sage-mist;
+  }
+  .input {
+    @apply w-full rounded-xl border border-sage-light/50 bg-white px-4 py-3 text-base text-ink placeholder:text-ink/40 focus:border-sage focus:ring-1 focus:ring-sage;
+  }
+  .label {
+    @apply block text-sm font-semibold text-navy mb-1.5;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+  .section-title {
+    @apply text-2xl font-display text-navy mb-1;
+  }
+}
+
+/* Page-load reveal animation */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise-in {
+  animation: riseIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in { animation: none; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* Print-friendly: hide chrome, expand content */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  .card { box-shadow: none; border: 1px solid #ddd; }
+}
