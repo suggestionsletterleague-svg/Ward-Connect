@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Modal from '../../components/Modal'
 import { LoadingState, EmptyState, ErrorState } from '../../components/ui'
 import { TextField, TextArea, NumberField } from '../../components/admin/Fields'
@@ -55,9 +56,14 @@ export default function AdminVolunteer() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl">Volunteer Opportunities</h1>
-        <button onClick={openNew} className="btn-primary px-4 py-2 text-sm">+ New Opportunity</button>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/admin/volunteer-submissions" className="btn-secondary px-4 py-2 text-sm">
+            Review Suggestions
+          </Link>
+          <button onClick={openNew} className="btn-primary px-4 py-2 text-sm">+ New Opportunity</button>
+        </div>
       </div>
 
       {loading && <LoadingState />}

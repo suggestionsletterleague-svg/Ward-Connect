@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Layout from '../components/Layout'
 import Modal from '../components/Modal'
 import SignupForm from '../components/SignupForm'
@@ -27,6 +28,19 @@ export default function Volunteer() {
   return (
     <Layout title="Volunteer" showBack>
       <PageHeading title="Volunteer Opportunities" subtitle="Sign up to serve — no account needed" />
+
+      <Link
+        to="/suggest-volunteer"
+        className="card mb-4 flex items-center gap-3 transition hover:shadow-card-hover rise-in"
+      >
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-sage-mist text-xl" aria-hidden="true">
+          📋
+        </span>
+        <div className="min-w-0">
+          <p className="font-semibold text-navy">Suggest a Volunteer Need</p>
+          <p className="text-xs text-ink/55">Share a service opportunity for leader review</p>
+        </div>
+      </Link>
 
       {loading && <LoadingState label="Loading opportunities…" />}
       {error && <ErrorState error={error} onRetry={refetch} />}

@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useQuery } from '../../hooks/useQuery'
-import { helpApi, announcementsApi, eventsApi, goodNewsApi } from '../../services/api'
+import { helpApi, announcementsApi, eventsApi, goodNewsApi, volunteerSubmissionsApi } from '../../services/api'
 
 const tiles = [
   { to: '/admin/programs', label: 'Sacrament Program', icon: '📖', desc: 'Draft & publish' },
   { to: '/admin/announcements', label: 'Announcements', icon: '📣', desc: 'Post ward news' },
   { to: '/admin/events', label: 'Calendar Events', icon: '📅', desc: 'Manage events' },
   { to: '/admin/volunteer', label: 'Volunteer', icon: '🤝', desc: 'Opportunities & signups' },
+  { to: '/admin/volunteer-submissions', label: 'Vol. Suggestions', icon: '📋', desc: 'Review & approve' },
   { to: '/admin/meals', label: 'Missionary Meals', icon: '🍽️', desc: 'Dinner slots' },
   { to: '/admin/cleaning', label: 'Building Cleaning', icon: '🧹', desc: 'Assignments' },
   { to: '/admin/lessons', label: 'Lessons', icon: '✝️', desc: 'Weekly schedule' },
@@ -19,21 +20,27 @@ export default function AdminDashboard() {
   const { profile } = useAuth()
   const help = useQuery(() => helpApi.listAll(), [])
   const goodNews = useQuery(() => goodNewsApi.listPending(), [])
+  const volunteerSuggestions = useQuery(() => volunteerSubmissionsApi.listPending(), [])
   const announcements = useQuery(() => announcementsApi.listAll(), [])
   const events = useQuery(() => eventsApi.listUpcoming(), [])
 
   const openHelp = help.data?.filter((h) => !h.handled).length
   const pendingGoodNews = goodNews.data?.length
+  const pendingVolunteerSuggestions = volunteerSuggestions.data?.length
 
   return (
     <div>
       <h1 className="text-3xl">Welcome, {profile?.full_name?.split(' ')[0] || 'Leader'}</h1>
       <p className="mt-1 text-ink/60">Manage your ward's content from here.</p>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <div className="card text-center">
           <p className="text-3xl font-display text-navy">{pendingGoodNews ?? '—'}</p>
           <p className="text-xs text-ink/55">Good news to review</p>
+        </div>
+        <div className="card text-center">
+          <p className="text-3xl font-display text-navy">{pendingVolunteerSuggestions ?? '—'}</p>
+          <p className="text-xs text-ink/55">Volunteer suggestions</p>
         </div>
         <div className="card text-center">
           <p className="text-3xl font-display text-navy">{openHelp ?? '—'}</p>

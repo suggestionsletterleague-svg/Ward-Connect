@@ -7,6 +7,7 @@ const sections = [
   { to: '/admin/announcements', label: 'Announcements' },
   { to: '/admin/events', label: 'Events' },
   { to: '/admin/volunteer', label: 'Volunteer' },
+  { to: '/admin/volunteer-submissions', label: 'Vol. Suggestions' },
   { to: '/admin/meals', label: 'Missionary Meals' },
   { to: '/admin/cleaning', label: 'Cleaning' },
   { to: '/admin/lessons', label: 'Lessons' },

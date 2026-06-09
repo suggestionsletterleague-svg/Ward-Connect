@@ -146,6 +146,64 @@ export const volunteerApi = {
   }
 }
 
+// ---------- Volunteer Opportunity Submissions ----------
+export const volunteerSubmissionsApi = {
+  submit(payload) {
+    return supabase.from('volunteer_opportunity_submissions').insert({
+      ...payload,
+      status: 'pending'
+    })
+  },
+  listAll() {
+    return supabase
+      .from('volunteer_opportunity_submissions')
+      .select('*')
+      .order('created_at', { ascending: false })
+  },
+  listPending() {
+    return supabase
+      .from('volunteer_opportunity_submissions')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+  },
+  async approve(id, opportunityPayload) {
+    const { data: opportunity, error: opportunityError } = await supabase
+      .from('volunteer_opportunities')
+      .insert(opportunityPayload)
+      .select()
+      .single()
+    if (opportunityError) return { data: null, error: opportunityError }
+
+    return supabase
+      .from('volunteer_opportunity_submissions')
+      .update({
+        status: 'approved',
+        reviewed_at: new Date().toISOString(),
+        opportunity_id: opportunity.id,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+  },
+  reject(id) {
+    return supabase
+      .from('volunteer_opportunity_submissions')
+      .update({
+        status: 'rejected',
+        reviewed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+  },
+  remove(id) {
+    return supabase.from('volunteer_opportunity_submissions').delete().eq('id', id)
+  }
+}
+
 // ---------- Missionary Meals ----------
 export const mealsApi = {
   listOpen() {
