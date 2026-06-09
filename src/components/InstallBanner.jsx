@@ -1,33 +1,92 @@
-import { useState } from 'react'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
+import { WARD_NAME } from '../lib/constants'
+import Modal from './Modal'
 
 export default function InstallBanner() {
-  const { canInstall, promptInstall } = useInstallPrompt()
-  const [dismissed, setDismissed] = useState(false)
+  const { platform, canInstall, showPrompt, promptInstall, dismiss } = useInstallPrompt()
 
-  if (!canInstall || dismissed) return null
+  if (!showPrompt) return null
 
   return (
-    <div className="no-print mx-auto max-w-lg px-4 pt-3">
-      <div className="flex items-center gap-3 rounded-xl bg-gold-mist px-4 py-3 text-navy-dark shadow-soft">
-        <img src="/icon-192.png" alt="" className="h-9 w-9 rounded-lg" />
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold">Install Ward Connect</p>
-          <p className="text-xs text-navy/70">Add it to your home screen for quick access.</p>
-        </div>
-        <button onClick={promptInstall} className="btn-gold px-3 py-1.5 text-sm">
-          Install
-        </button>
-        <button
-          onClick={() => setDismissed(true)}
-          aria-label="Dismiss install prompt"
-          className="rounded-lg p-1 text-navy/50 hover:bg-white/40"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M6 6l12 12M18 6L6 18" />
-          </svg>
+    <Modal
+      open={showPrompt}
+      onClose={dismiss}
+      title="Add to Home Screen"
+      maxWidth="max-w-sm"
+    >
+      <div className="text-center">
+        <img
+          src="/icon-192.png"
+          alt=""
+          className="mx-auto h-20 w-20 rounded-2xl shadow-soft"
+        />
+        <p className="mt-4 text-base font-semibold text-navy">{WARD_NAME}</p>
+        <p className="mt-2 text-sm leading-relaxed text-ink/70">
+          Install the ward app on your home screen for quick access — just like a regular app.
+        </p>
+      </div>
+
+      {platform === 'ios' && (
+        <ol className="mt-5 space-y-3 text-sm text-ink/80">
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">
+              1
+            </span>
+            <span>
+              Tap the <strong>Share</strong> button at the bottom of Safari
+              <span className="inline-block px-1" aria-hidden="true">⬆️</span>
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">
+              2
+            </span>
+            <span>
+              Scroll down and tap <strong>Add to Home Screen</strong>
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">
+              3
+            </span>
+            <span>
+              Tap <strong>Add</strong> — you&apos;ll see the ward icon on your home screen
+            </span>
+          </li>
+        </ol>
+      )}
+
+      {platform === 'android' && !canInstall && (
+        <ol className="mt-5 space-y-3 text-sm text-ink/80">
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">
+              1
+            </span>
+            <span>
+              Tap the <strong>menu</strong> button (three dots) in Chrome
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-xs font-bold text-white">
+              2
+            </span>
+            <span>
+              Tap <strong>Install app</strong> or <strong>Add to Home screen</strong>
+            </span>
+          </li>
+        </ol>
+      )}
+
+      <div className="mt-6 flex flex-col gap-2">
+        {platform === 'android' && canInstall && (
+          <button onClick={promptInstall} className="btn-gold w-full">
+            Install now
+          </button>
+        )}
+        <button onClick={dismiss} className="btn-ghost w-full text-sm">
+          Maybe later
         </button>
       </div>
-    </div>
+    </Modal>
   )
 }
