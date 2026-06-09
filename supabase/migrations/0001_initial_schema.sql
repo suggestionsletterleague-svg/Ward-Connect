@@ -230,7 +230,7 @@ end $$;
 
 -- Volunteer counter
 create or replace function public.sync_volunteer_count()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   update public.volunteer_opportunities o
   set current_signups = (
@@ -247,7 +247,7 @@ for each row execute function public.sync_volunteer_count();
 
 -- Cleaning counter
 create or replace function public.sync_cleaning_count()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   update public.building_cleaning_slots sl
   set current_signups = (
@@ -264,7 +264,7 @@ for each row execute function public.sync_cleaning_count();
 
 -- Meal status (single-host model)
 create or replace function public.sync_meal_status()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   if (tg_op = 'INSERT') then
     update public.missionary_meals
@@ -276,7 +276,11 @@ begin
     set status = case
                    when exists (select 1 from public.missionary_meal_signups s where s.meal_id = m.id) then 'filled'
                    else 'open'
-                 end
+                 end,
+        assigned_family = case
+                            when exists (select 1 from public.missionary_meal_signups s where s.meal_id = m.id) then m.assigned_family
+                            else null
+                          end
     where m.id = old.meal_id;
   end if;
   return null;
