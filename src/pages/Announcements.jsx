@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { LoadingState, EmptyState, ErrorState, CategoryChip, PageHeading } from '../components/ui'
 import { useQuery } from '../hooks/useQuery'
@@ -15,6 +16,19 @@ export default function Announcements() {
   return (
     <Layout title="Announcements">
       <PageHeading title="Announcements" subtitle="Stay up to date with ward news" />
+
+      <Link
+        to="/good-news"
+        className="card mb-4 flex items-center gap-3 transition hover:shadow-card-hover rise-in"
+      >
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold-mist text-xl" aria-hidden="true">
+          ✨
+        </span>
+        <div className="min-w-0">
+          <p className="font-semibold text-navy">Share Good News</p>
+          <p className="text-xs text-ink/55">Submit uplifting news for leader review</p>
+        </div>
+      </Link>
 
       {/* Category filter */}
       <div className="no-print mb-4 -mx-4 flex gap-2 overflow-x-auto px-4 pb-1">

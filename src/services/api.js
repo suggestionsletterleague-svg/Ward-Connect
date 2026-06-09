@@ -247,6 +247,65 @@ export const lessonsApi = {
   }
 }
 
+// ---------- Good News Submissions ----------
+export const goodNewsApi = {
+  // Public INSERT only.
+  submit(payload) {
+    return supabase.from('good_news_submissions').insert({
+      ...payload,
+      status: 'pending'
+    })
+  },
+  listAll() {
+    return supabase
+      .from('good_news_submissions')
+      .select('*')
+      .order('created_at', { ascending: false })
+  },
+  listPending() {
+    return supabase
+      .from('good_news_submissions')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+  },
+  async approve(id, announcementPayload) {
+    const { data: announcement, error: announcementError } = await supabase
+      .from('announcements')
+      .insert(announcementPayload)
+      .select()
+      .single()
+    if (announcementError) return { data: null, error: announcementError }
+
+    return supabase
+      .from('good_news_submissions')
+      .update({
+        status: 'approved',
+        reviewed_at: new Date().toISOString(),
+        announcement_id: announcement.id,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+  },
+  reject(id) {
+    return supabase
+      .from('good_news_submissions')
+      .update({
+        status: 'rejected',
+        reviewed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+  },
+  remove(id) {
+    return supabase.from('good_news_submissions').delete().eq('id', id)
+  }
+}
+
 // ---------- Help Requests (private) ----------
 export const helpApi = {
   // Public INSERT only.

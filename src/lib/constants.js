@@ -5,6 +5,7 @@ export const WARD_TAGLINE = 'Connecting, serving, and worshipping together'
 
 export const ANNOUNCEMENT_CATEGORIES = [
   'Ward',
+  'Good News',
   'Youth',
   'Relief Society',
   'Elders Quorum',
@@ -36,6 +37,7 @@ export const HELP_REQUEST_TYPES = [
 // Tailwind chip classes per category (kept readable + high contrast).
 export const CATEGORY_STYLES = {
   Ward: 'bg-navy/10 text-navy',
+  'Good News': 'bg-gold-mist text-gold-dark',
   Youth: 'bg-gold-mist text-gold-dark',
   'Relief Society': 'bg-sage-mist text-sage-dark',
   'Elders Quorum': 'bg-navy/10 text-navy-light',

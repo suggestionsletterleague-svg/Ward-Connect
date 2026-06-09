@@ -10,7 +10,8 @@ const sections = [
   { to: '/admin/meals', label: 'Missionary Meals' },
   { to: '/admin/cleaning', label: 'Cleaning' },
   { to: '/admin/lessons', label: 'Lessons' },
-  { to: '/admin/help-requests', label: 'Help Requests' }
+  { to: '/admin/help-requests', label: 'Help Requests' },
+  { to: '/admin/good-news', label: 'Good News' }
 ]
 
 export default function AdminLayout() {

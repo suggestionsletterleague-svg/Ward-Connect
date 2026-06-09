@@ -6,6 +6,7 @@ import { formatDate } from '../lib/format'
 const actions = [
   { to: '/program', title: "Today's Program", desc: 'Sacrament meeting', icon: '📖', tone: 'navy' },
   { to: '/announcements', title: 'Announcements', desc: 'Ward news', icon: '📣', tone: 'gold' },
+  { to: '/good-news', title: 'Share Good News', desc: 'Submit for review', icon: '✨', tone: 'gold' },
   { to: '/calendar', title: 'Calendar', desc: 'Upcoming events', icon: '📅', tone: 'sage' },
   { to: '/volunteer', title: 'Volunteer', desc: 'Service needs', icon: '🤝', tone: 'sage' },
   { to: '/missionaries', title: 'Feed Missionaries', desc: 'Dinner signups', icon: '🍽️', tone: 'gold' },

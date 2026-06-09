@@ -12,6 +12,7 @@ import Missionary from './pages/Missionary'
 import Cleaning from './pages/Cleaning'
 import Lessons from './pages/Lessons'
 import HelpRequest from './pages/HelpRequest'
+import ShareGoodNews from './pages/ShareGoodNews'
 import NotFound from './pages/NotFound'
 
 // Admin pages
@@ -28,6 +29,7 @@ import AdminMeals from './pages/admin/AdminMeals'
 import AdminCleaning from './pages/admin/AdminCleaning'
 import AdminLessons from './pages/admin/AdminLessons'
 import AdminHelpRequests from './pages/admin/AdminHelpRequests'
+import AdminGoodNews from './pages/admin/AdminGoodNews'
 
 export default function App() {
   return (
@@ -43,6 +45,7 @@ export default function App() {
       <Route path="/cleaning" element={<Cleaning />} />
       <Route path="/lessons" element={<Lessons />} />
       <Route path="/help" element={<HelpRequest />} />
+      <Route path="/good-news" element={<ShareGoodNews />} />
 
       {/* Admin */}
       <Route path="/admin/login" element={<AdminLogin />} />
@@ -65,6 +68,7 @@ export default function App() {
         <Route path="cleaning" element={<AdminCleaning />} />
         <Route path="lessons" element={<AdminLessons />} />
         <Route path="help-requests" element={<AdminHelpRequests />} />
+        <Route path="good-news" element={<AdminGoodNews />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
