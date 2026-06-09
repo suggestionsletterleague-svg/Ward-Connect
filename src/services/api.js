@@ -75,6 +75,14 @@ export const eventsApi = {
       .gte('event_date', todayISO())
       .order('event_date', { ascending: true })
   },
+  listInRange(startDate, endDate) {
+    return supabase
+      .from('calendar_events')
+      .select('*')
+      .gte('event_date', startDate)
+      .lte('event_date', endDate)
+      .order('event_date', { ascending: true })
+  },
   listAll() {
     return supabase.from('calendar_events').select('*').order('event_date', { ascending: true })
   },

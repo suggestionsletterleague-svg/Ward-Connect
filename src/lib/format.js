@@ -49,6 +49,49 @@ export function todayISO() {
   return new Date().toISOString().slice(0, 10)
 }
 
+export function toISODate(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+// Parse YYYY-MM-DD as a local date (avoids UTC timezone shifts).
+export function parseISODate(value) {
+  if (!value) return null
+  const [year, month, day] = value.split('-').map(Number)
+  if (!year || !month || !day) return null
+  return new Date(year, month - 1, day)
+}
+
+export function getMonthLabel(year, month) {
+  return new Date(year, month, 1).toLocaleDateString(undefined, {
+    month: 'long',
+    year: 'numeric'
+  })
+}
+
+// Sunday-start month grid cells for a calendar view.
+export function getMonthGrid(year, month) {
+  const firstOfMonth = new Date(year, month, 1)
+  const startOffset = firstOfMonth.getDay()
+  const gridStart = new Date(year, month, 1 - startOffset)
+  const today = todayISO()
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(gridStart)
+    date.setDate(gridStart.getDate() + index)
+    const iso = toISODate(date)
+    return {
+      iso,
+      date,
+      day: date.getDate(),
+      inMonth: date.getMonth() === month,
+      isToday: iso === today
+    }
+  })
+}
+
 // Is the given date today or in the future (date-only comparison)?
 export function isUpcoming(dateValue) {
   if (!dateValue) return false
