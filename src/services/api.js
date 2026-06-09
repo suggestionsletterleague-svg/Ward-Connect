@@ -152,6 +152,7 @@ export const mealsApi = {
     return supabase
       .from('missionary_meals')
       .select('*')
+      .eq('status', 'open')
       .gte('meal_date', todayISO())
       .order('meal_date', { ascending: true })
   },

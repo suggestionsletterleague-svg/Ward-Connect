@@ -1,13 +1,10 @@
 -- ============================================================================
--- Ward Connect — Migration 0002
--- Enforce signup capacity at the DATABASE level (closes the race condition where
--- two people could claim the last spot, or a meal could get a second host).
---
--- Each check locks the parent row (FOR UPDATE) so concurrent inserts on the same
--- slot are serialized. Run this in the Supabase SQL Editor after 0001.
+-- Ward Connect — Migration 0004
+-- Fix capacity-check triggers so they can read parent rows during anon signups.
+-- Without SECURITY DEFINER, RLS blocks the trigger's FOR UPDATE lookup and
+-- members see "This dinner date is no longer available." even when it is open.
 -- ============================================================================
 
--- ---- Volunteer opportunities -----------------------------------------------
 create or replace function public.check_volunteer_capacity()
 returns trigger
 language plpgsql
@@ -18,7 +15,6 @@ declare
   v_needed  integer;
   v_current integer;
 begin
-  -- Lock the parent row so concurrent signups queue behind each other.
   select number_needed into v_needed
   from public.volunteer_opportunities
   where id = new.opportunity_id
@@ -41,12 +37,6 @@ begin
 end;
 $$;
 
-drop trigger if exists trg_volunteer_capacity on public.volunteer_signups;
-create trigger trg_volunteer_capacity
-before insert on public.volunteer_signups
-for each row execute function public.check_volunteer_capacity();
-
--- ---- Building cleaning slots ------------------------------------------------
 create or replace function public.check_cleaning_capacity()
 returns trigger
 language plpgsql
@@ -79,12 +69,6 @@ begin
 end;
 $$;
 
-drop trigger if exists trg_cleaning_capacity on public.building_cleaning_signups;
-create trigger trg_cleaning_capacity
-before insert on public.building_cleaning_signups
-for each row execute function public.check_cleaning_capacity();
-
--- ---- Missionary meals (single host) ----------------------------------------
 create or replace function public.check_meal_capacity()
 returns trigger
 language plpgsql
@@ -92,8 +76,8 @@ security definer
 set search_path = public
 as $$
 declare
-  v_status   text;
-  v_taken    boolean;
+  v_status text;
+  v_taken  boolean;
 begin
   select status into v_status
   from public.missionary_meals
@@ -121,13 +105,3 @@ begin
   return new;
 end;
 $$;
-
-drop trigger if exists trg_meal_capacity on public.missionary_meal_signups;
-create trigger trg_meal_capacity
-before insert on public.missionary_meal_signups
-for each row execute function public.check_meal_capacity();
-
--- ============================================================================
--- DONE. The friendly exception messages above are returned straight to the app,
--- so a member who just missed the last spot sees a clear, kind message.
--- ============================================================================
