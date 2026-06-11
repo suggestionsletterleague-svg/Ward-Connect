@@ -3,7 +3,7 @@ import { useState } from 'react'
 // fields: array of { name, label, type, required, placeholder }
 export default function SignupForm({ fields, onSubmit, submitLabel = 'Sign Up', onSuccess }) {
   const [values, setValues] = useState(
-    Object.fromEntries(fields.map((f) => [f.name, '']))
+    Object.fromEntries(fields.map((f) => [f.name, f.type === 'number' ? '1' : '']))
   )
   const [status, setStatus] = useState('idle') // idle | submitting | success | error
   const [errorMsg, setErrorMsg] = useState('')
@@ -58,7 +58,10 @@ export default function SignupForm({ fields, onSubmit, submitLabel = 'Sign Up', 
             <input
               id={field.name}
               type={field.type || 'text'}
-              inputMode={field.type === 'tel' ? 'tel' : field.type === 'email' ? 'email' : 'text'}
+              min={field.type === 'number' ? field.min ?? 1 : undefined}
+              inputMode={
+                field.type === 'tel' ? 'tel' : field.type === 'email' ? 'email' : field.type === 'number' ? 'numeric' : 'text'
+              }
               className="input"
               required={field.required}
               placeholder={field.placeholder}

@@ -130,7 +130,7 @@ export default function AdminVolunteer() {
 }
 
 // Shared component to view/remove signups for a slot or opportunity.
-export function SignupViewer({ open, onClose, title, fetchSignups, onRemove, viewingId }) {
+export function SignupViewer({ open, onClose, title, fetchSignups, onRemove, viewingId, renderExtra }) {
   const { data, loading, error, refetch } = useQuery(
     () => (viewingId ? fetchSignups() : Promise.resolve({ data: [] })),
     [viewingId]
@@ -142,8 +142,15 @@ export function SignupViewer({ open, onClose, title, fetchSignups, onRemove, vie
     if (error) alert(error.message); else refetch()
   }
 
+  const headcount = data?.reduce((sum, item) => sum + (item.party_size ?? 1), 0) ?? 0
+
   return (
     <Modal open={open} onClose={onClose} title={`Signups — ${title || ''}`}>
+      {!loading && data?.length > 0 && (
+        <p className="mb-3 text-sm font-semibold text-sage-dark">
+          Total headcount: {headcount}
+        </p>
+      )}
       {loading && <LoadingState />}
       {error && <ErrorState error={error} onRetry={refetch} />}
       {!loading && data?.length === 0 && <p className="py-6 text-center text-ink/50">No signups yet.</p>}
@@ -151,7 +158,12 @@ export function SignupViewer({ open, onClose, title, fetchSignups, onRemove, vie
         {data?.map((s) => (
           <li key={s.id} className="flex items-start justify-between gap-3 rounded-xl bg-cream px-3 py-2.5">
             <div className="min-w-0">
-              <p className="font-semibold text-navy">{s.name}</p>
+              <p className="font-semibold text-navy">
+                {s.name}
+                {renderExtra?.(s) && (
+                  <span className="ml-2 text-sm font-medium text-sage-dark">({renderExtra(s)})</span>
+                )}
+              </p>
               <p className="text-sm text-ink/60">
                 {[s.phone, s.email, s.address].filter(Boolean).join(' · ')}
               </p>

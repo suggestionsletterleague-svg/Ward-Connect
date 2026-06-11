@@ -107,6 +107,19 @@ export const eventsApi = {
   },
   remove(id) {
     return supabase.from('calendar_events').delete().eq('id', id)
+  },
+  rsvpsFor(eventId) {
+    return supabase
+      .from('event_rsvps')
+      .select('*')
+      .eq('event_id', eventId)
+      .order('created_at', { ascending: true })
+  },
+  rsvp(payload) {
+    return supabase.from('event_rsvps').insert(payload)
+  },
+  removeRsvp(id) {
+    return supabase.from('event_rsvps').delete().eq('id', id)
   }
 }
 

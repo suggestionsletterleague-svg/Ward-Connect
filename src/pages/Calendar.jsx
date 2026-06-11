@@ -1,35 +1,11 @@
 import { useMemo, useState } from 'react'
 import Layout from '../components/Layout'
 import MonthCalendar from '../components/MonthCalendar'
-import { LoadingState, EmptyState, ErrorState, CategoryChip, PageHeading } from '../components/ui'
+import EventCard from '../components/EventCard'
+import { LoadingState, EmptyState, ErrorState, PageHeading } from '../components/ui'
 import { useQuery } from '../hooks/useQuery'
 import { eventsApi } from '../services/api'
-import { formatDate, formatTime, getMonthGrid, parseISODate, todayISO, toISODate } from '../lib/format'
-
-function EventCard({ event, compact = false }) {
-  return (
-    <article className={`card rise-in ${compact ? 'p-4' : ''}`}>
-      <div className="flex items-start justify-between gap-2">
-        <h2 className="text-lg leading-tight">{event.title}</h2>
-        <CategoryChip category={event.category} />
-      </div>
-      <p className="mt-0.5 text-sm text-ink/55">
-        {formatDate(event.event_date, { weekday: 'long' })}
-        {event.event_time && ` · ${formatTime(event.event_time)}`}
-      </p>
-      {event.location && (
-        <p className="mt-1 flex items-center gap-1 text-sm text-sage-dark">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z" />
-            <circle cx="12" cy="10" r="2.5" />
-          </svg>
-          {event.location}
-        </p>
-      )}
-      {event.description && <p className="mt-2 text-sm text-ink/70">{event.description}</p>}
-    </article>
-  )
-}
+import { formatDate, getMonthGrid, parseISODate, todayISO, toISODate } from '../lib/format'
 
 export default function Calendar() {
   const today = todayISO()
@@ -50,6 +26,11 @@ export default function Calendar() {
   )
 
   const upcoming = useQuery(() => eventsApi.listUpcoming(), [])
+
+  const refreshAll = () => {
+    refetch()
+    upcoming.refetch()
+  }
 
   const eventsByDate = useMemo(() => {
     const map = new Map()
@@ -138,7 +119,7 @@ export default function Calendar() {
 
             <div className="space-y-3">
               {selectedEvents.map((event) => (
-                <EventCard key={event.id} event={event} compact />
+                <EventCard key={event.id} event={event} onRsvpSuccess={refreshAll} />
               ))}
             </div>
           </div>
@@ -154,43 +135,9 @@ export default function Calendar() {
           )}
 
           <div className="space-y-3">
-            {upcoming.data?.map((event, index) => {
-              const eventDate = parseISODate(event.event_date)
-              return (
-                <article
-                  key={event.id}
-                  className="card rise-in flex gap-4"
-                  style={{ animationDelay: `${index * 40}ms` }}
-                >
-                  <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-navy/5 py-2 text-navy">
-                    <span className="text-xs font-semibold uppercase">
-                      {eventDate?.toLocaleDateString(undefined, { month: 'short' })}
-                    </span>
-                    <span className="text-2xl font-display leading-none">{eventDate?.getDate()}</span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <h2 className="text-lg leading-tight">{event.title}</h2>
-                      <CategoryChip category={event.category} />
-                    </div>
-                    <p className="mt-0.5 text-sm text-ink/55">
-                      {formatDate(event.event_date, { weekday: 'long' })}
-                      {event.event_time && ` · ${formatTime(event.event_time)}`}
-                    </p>
-                    {event.location && (
-                      <p className="mt-1 flex items-center gap-1 text-sm text-sage-dark">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z" />
-                          <circle cx="12" cy="10" r="2.5" />
-                        </svg>
-                        {event.location}
-                      </p>
-                    )}
-                    {event.description && <p className="mt-2 text-sm text-ink/70">{event.description}</p>}
-                  </div>
-                </article>
-              )
-            })}
+            {upcoming.data?.map((event) => (
+              <EventCard key={event.id} event={event} onRsvpSuccess={refreshAll} />
+            ))}
           </div>
         </>
       )}
