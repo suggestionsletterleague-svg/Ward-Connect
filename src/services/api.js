@@ -13,6 +13,14 @@ export const programsApi = {
       .limit(1)
       .maybeSingle()
   },
+  getPublishedForDate(meetingDate) {
+    return supabase
+      .from('programs')
+      .select('*')
+      .eq('status', 'published')
+      .eq('meeting_date', meetingDate)
+      .maybeSingle()
+  },
   // Admin: all programs (drafts + published).
   listAll() {
     return supabase.from('programs').select('*').order('meeting_date', { ascending: false })

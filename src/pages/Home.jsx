@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Layout from '../components/Layout'
+import SundaySnapshot from '../components/SundaySnapshot'
 import { WARD_NAME, WARD_TAGLINE } from '../lib/constants'
 import { formatDate } from '../lib/format'
 
@@ -33,9 +34,11 @@ export default function Home() {
         <p className="mt-2 text-white/80">{WARD_TAGLINE}</p>
         <p className="mt-4 text-sm leading-relaxed text-white/70">
           Welcome! Whether you're a longtime member or visiting for the first time, we're glad
-          you're here. Tap any card below to get started.
+          you're here.
         </p>
       </section>
+
+      <SundaySnapshot />
 
       {/* Quick actions */}
       <h2 className="mb-3 mt-6 text-lg text-navy">Quick actions</h2>

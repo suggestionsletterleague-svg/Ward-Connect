@@ -49,6 +49,15 @@ export function todayISO() {
   return new Date().toISOString().slice(0, 10)
 }
 
+// Next sacrament meeting Sunday (today if it's Sunday, otherwise the coming Sunday).
+export function getUpcomingSundayISO() {
+  const today = new Date()
+  const sunday = new Date(today)
+  const day = today.getDay()
+  if (day !== 0) sunday.setDate(today.getDate() + (7 - day))
+  return toISODate(sunday)
+}
+
 export function toISODate(date) {
   const y = date.getFullYear()
   const m = String(date.getMonth() + 1).padStart(2, '0')
