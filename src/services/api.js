@@ -316,6 +316,24 @@ export const lessonsApi = {
 
 // ---------- Good News Submissions ----------
 export const goodNewsApi = {
+  async uploadImage(file) {
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const path = `${crypto.randomUUID()}/${Date.now()}.${extension}`
+    const { data, error } = await supabase.storage
+      .from('good-news-images')
+      .upload(path, file, { cacheControl: '3600', upsert: false })
+    if (error) return { data: null, error }
+
+    const { data: publicData } = supabase.storage.from('good-news-images').getPublicUrl(data.path)
+    return { data: { path: data.path, url: publicData.publicUrl }, error: null }
+  },
+  async removeImage(imageUrl) {
+    const marker = '/good-news-images/'
+    const index = imageUrl?.indexOf(marker)
+    if (index === -1) return { error: null }
+    const path = imageUrl.slice(index + marker.length)
+    return supabase.storage.from('good-news-images').remove([path])
+  },
   // Public INSERT only.
   submit(payload) {
     return supabase.from('good_news_submissions').insert({
@@ -368,7 +386,8 @@ export const goodNewsApi = {
       .select()
       .single()
   },
-  remove(id) {
+  async remove(id, imageUrl) {
+    if (imageUrl) await goodNewsApi.removeImage(imageUrl)
     return supabase.from('good_news_submissions').delete().eq('id', id)
   }
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AnnouncementImage from '../../components/AnnouncementImage'
 import { LoadingState, EmptyState, ErrorState } from '../../components/ui'
 import { TextField, TextArea, SelectField } from '../../components/admin/Fields'
 import Modal from '../../components/Modal'
@@ -24,7 +25,8 @@ export default function AdminGoodNews() {
       category: 'Good News',
       publish_date: todayISO(),
       expiration_date: '',
-      link_url: ''
+      link_url: '',
+      image_url: item.image_url || ''
     })
   }
 
@@ -44,7 +46,8 @@ export default function AdminGoodNews() {
       category: publishForm.category,
       publish_date: publishForm.publish_date,
       expiration_date: publishForm.expiration_date || null,
-      link_url: publishForm.link_url || null
+      link_url: publishForm.link_url || null,
+      image_url: publishForm.image_url || null
     })
     setSaving(false)
     if (approveError) {
@@ -64,7 +67,7 @@ export default function AdminGoodNews() {
 
   const handleDelete = async (item) => {
     if (!window.confirm('Permanently delete this submission?')) return
-    const { error: deleteError } = await goodNewsApi.remove(item.id)
+    const { error: deleteError } = await goodNewsApi.remove(item.id, item.image_url)
     if (deleteError) alert(deleteError.message)
     else refetch()
   }
@@ -130,6 +133,14 @@ export default function AdminGoodNews() {
               <span className="shrink-0 text-xs text-ink/40">{formatDateTime(item.created_at)}</span>
             </div>
 
+            {item.image_url && (
+              <AnnouncementImage
+                src={item.image_url}
+                alt={item.title}
+                className="mt-3 max-h-72"
+              />
+            )}
+
             <p className="mt-2 whitespace-pre-line rounded-xl bg-cream px-3 py-2 text-ink/80">
               {item.body}
             </p>
@@ -174,6 +185,16 @@ export default function AdminGoodNews() {
               value={publishForm.body}
               onChange={(v) => setField('body', v)}
             />
+            {publishForm.image_url && (
+              <div>
+                <p className="label">Photo</p>
+                <AnnouncementImage
+                  src={publishForm.image_url}
+                  alt={publishForm.title}
+                  className="max-h-64"
+                />
+              </div>
+            )}
             <SelectField
               label="Category"
               value={publishForm.category}

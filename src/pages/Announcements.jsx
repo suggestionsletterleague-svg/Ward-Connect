@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Layout from '../components/Layout'
+import AnnouncementImage from '../components/AnnouncementImage'
 import { LoadingState, EmptyState, ErrorState, CategoryChip, PageHeading } from '../components/ui'
 import { useQuery } from '../hooks/useQuery'
 import { announcementsApi } from '../services/api'
@@ -26,7 +27,7 @@ export default function Announcements() {
         </span>
         <div className="min-w-0">
           <p className="font-semibold text-navy">Share Good News</p>
-          <p className="text-xs text-ink/55">Submit uplifting news for leader review</p>
+          <p className="text-xs text-ink/55">Submit uplifting news and photos for leader review</p>
         </div>
       </Link>
 
@@ -59,6 +60,9 @@ export default function Announcements() {
               <time className="text-xs text-ink/45">{formatDate(a.publish_date, { weekday: 'short' })}</time>
             </div>
             <h2 className="text-lg leading-snug">{a.title}</h2>
+            {a.image_url && (
+              <AnnouncementImage src={a.image_url} alt={a.title} className="mt-3 max-h-80" />
+            )}
             {a.body && <p className="mt-1.5 whitespace-pre-line text-ink/75">{a.body}</p>}
             {a.link_url && (
               <a
